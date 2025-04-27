@@ -1,0 +1,26 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: memos
+spec:
+  template:
+    metadata:
+      annotations:
+        run.googleapis.com/execution-environment: gen2
+    spec:
+      containers:
+      - image: neosmemo/memos:stable
+        volumeMounts:
+        - name: memos
+          mountPath: /var/opt/memos
+        resources:
+          limits:
+            memory: 1024M
+        ports:
+        - containerPort: 5230
+      volumes:
+      - name: memos
+        csi:
+          driver: gcsfuse.run.googleapis.com
+          volumeAttributes:
+            bucketName: memos-543kj4
